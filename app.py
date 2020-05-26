@@ -220,7 +220,10 @@ delta = global_daily_count[global_daily_count['Date'] == global_daily_count['Dat
 '''BEGIN DASH APP'''
 # todo add a page for twitter/social media mentions
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SLATE])
+external_stylesheets = ['https://codepen.io/unicorndy/pen/GRJXrvP.css','https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css']
+
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SLATE]
+                )
 # https://dash-bootstrap-components.opensource.faculty.ai/docs/themes/
 server = app.server
 app.title = 'nCov-19'
@@ -233,11 +236,20 @@ app.layout = html.Div(children=[
                       ' (Maintained by John Hopkins University)',
              style={'textAlign':'center'}),
 
+#     html.Div([
+#         dbc.Tabs(children=[
+#             dbc.Tab(label="Tab 1", tab_id="tab-1"),
+#             dbc.Tab(label="Tab 2", tab_id="tab-2")
+#         ])
+#     ]
+# ),
+
     html.Div([
         dcc.Location(id='url', refresh=False),
         dbc.Button(dcc.Link('Global',href='/page-1'), id="global-button", color='primary', className="mr-1"),
-        dbc.Button(dcc.Link('Top',href='/page-2'), id="top-button", color='primary', className="mr-1"),
-        dbc.Button(dcc.Link('Canada',href='/page-3'), id="canada-button", color='primary', className="mr-1"),
+        dbc.Button(dcc.Link('World News', href='/page-2'), id="news-button", color='primary', className="mr-1"),
+        dbc.Button(dcc.Link('Ranking',href='/page-3'), id="top-button", color='primary', className="mr-1"),
+        dbc.Button(dcc.Link('Canada',href='/page-4'), id="canada-button", color='primary', className="mr-1"),
         html.Div(id='page-content'),
         #html.Span(id='button-container')
     ],style={'textAlign':'center','width':'100%','float':'center','display':'inline-block','marginTop':'.5%'}),
@@ -353,12 +365,12 @@ df['Rank'] = df.index + 1
 df = df[['Rank','Country','Confirmed','Deaths','Recovered','Active']]
 df[['Confirmed','Deaths','Recovered','Active']] = df[['Confirmed','Deaths','Recovered','Active']].astype(int).applymap('{:,}'.format)
 
-page_2_layout = html.Div([
+page_3_layout = html.Div([
     html.Div(id='page-3'),
     html.Div(dbc.Table.from_dataframe(df.head(20),striped=True, bordered=True, hover=True))
 ], style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'})
 
-page_3_layout = html.Div([
+page_4_layout = html.Div([
     html.Div(id='page-3'),
     html.Div(id='canada-trending',
              style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'},
@@ -370,6 +382,21 @@ page_3_layout = html.Div([
              ], className='row')
 ])
 
+# https://www.cbc.ca/cmlink/rss-world
+news_feed = html.Div([
+    html.Div(id='rss'),
+    html.Div(id='news',
+             style={'width':'90%','marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'},
+             children=[
+                 html.Iframe(
+                     src='http://www.rssdog.com/index.php?url=http%3A%2F%2Fwww.cbc.ca%2Fcmlink%2Frss-world&mode=html&showonly=&maxitems=20&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&fullhtml=1&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
+                     style={'width':'107.7%', 'height':'42rem', 'display':'inline-block'}
+                     #height=600,
+                     #width=1845
+                             )
+             ])
+])
+
 # Display correct page based on user selection
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
@@ -377,9 +404,11 @@ def display_page(pathname):
     if pathname == '/page-1':
         return number_plates, page_1_layout
     elif pathname == '/page-2':
-        return number_plates, page_2_layout
+        return number_plates, news_feed
     elif pathname == '/page-3':
         return number_plates, page_3_layout
+    elif pathname == '/page-4':
+        return number_plates, page_4_layout
     else:
         return number_plates, page_1_layout
 
