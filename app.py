@@ -389,8 +389,8 @@ news_feed = html.Div([
              style={'width':'90%','marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '1%'},
              children=[
                  html.Iframe(
-                     #src='http://www.rssdog.com/index.php?url=http%3A%2F%2Fwww.cbc.ca%2Fcmlink%2Frss-world&mode=html&showonly=&maxitems=20&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&fullhtml=1&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
-                     src='https://www.cbc.ca/cmlink/rss-world',
+                     src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.cbc.ca%2Fcmlink%2Frss-world&mode=html&showonly=&maxitems=20&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&fullhtml=1&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
+                     #src='https://www.cbc.ca/cmlink/rss-world',
                      style={'width':'107.7%', 'height':'42rem', 'display':'inline-block', 'border':'none'}
                      #height=600,
                      #width=1845
