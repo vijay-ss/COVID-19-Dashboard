@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 from datetime import date, timedelta
 
-import twitter.py
+import twitter_web_scrape
 tweets = pd.read_csv(r'data/covid_tweets.csv')
 
 ### Data Pre-processing ###
@@ -219,7 +219,6 @@ global_total = global_total[global_daily_count['Date'] == global_total['Date'].m
 delta = global_daily_count[global_daily_count['Date'] == global_daily_count['Date'].max() - timedelta(days=1)]
 
 '''BEGIN DASH APP'''
-# todo add a page for twitter/social media mentions
 
 external_stylesheets = ['https://codepen.io/unicorndy/pen/GRJXrvP.css','https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css']
 
