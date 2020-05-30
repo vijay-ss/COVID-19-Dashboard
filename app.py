@@ -4,13 +4,14 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
-
 #import plotly.graph_objects as go
 import plotly.express as px
-
 import pandas as pd
 import numpy as np
 from datetime import date, timedelta
+
+import Twitterscraper
+tweets = pd.read_csv(r'data/covid_tweets.csv')
 
 ### Data Pre-processing ###
 # todo create a separate etl file to do the pre-processing and call it
@@ -371,7 +372,7 @@ page_3_layout = html.Div([
 ], style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'})
 
 page_4_layout = html.Div([
-    html.Div(id='page-3'),
+    html.Div(id='page-4'),
     html.Div(id='canada-trending',
              style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'},
              children=[
@@ -384,20 +385,22 @@ page_4_layout = html.Div([
 
 # https://www.cbc.ca/cmlink/rss-world
 news_feed = html.Div([
-    html.Div(id='rss'),
+    #html.Div(id='page-2'),
     html.Div(id='news',
-             style={'width':'90%','marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '1%'},
+             style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'},
+             #style={'width':'90%','marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '1%'},
              children=[
-                 html.Iframe(
-                     #src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.aljazeera.com%2Fxml%2Frss%2Fall.xml&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
-                     src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.cbc.ca%2Fcmlink%2Frss-world&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
-                     style={'width':'107.7%', 'height':'42rem', 'display':'inline-block', 'border':'none','font-family':'roboto'}
-                     #height=600,
-                     #width=1845
-                     #width 107.7%
-                     #'border': 'thin lightgrey solid'
-                             )
-             ])
+                 html.Iframe(id='rss',
+                                 #src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.aljazeera.com%2Fxml%2Frss%2Fall.xml&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
+                                 src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.cbc.ca%2Fcmlink%2Frss-world&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
+                                 style={'width':'49.6%','height':'42rem','display':'inline-block', 'border':'none'}
+                             #width:107.7
+                             #height=600,
+                             #width=1845
+                 ),
+                 html.Div(dbc.Table.from_dataframe(tweets[['Handle','Date','Tweet']],striped=True, bordered=True, hover=True,className='table-info'),
+                          style={'width':'49.6%','height':'42rem','display':'inline-block','overflowY':'auto','marginLeft':'.7%'})
+             ],className='row')
 ])
 
 # Display correct page based on user selection
