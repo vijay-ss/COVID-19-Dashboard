@@ -11,7 +11,7 @@ import numpy as np
 from datetime import date, timedelta
 
 import twitter_web_scrape
-tweets = pd.read_csv(r'data/covid_tweets.csv')
+df_tweets = pd.read_csv(r'data/covid_tweets.csv')
 
 ### Data Pre-processing ###
 # todo create a separate etl file to do the pre-processing and call it
@@ -67,7 +67,7 @@ countries_df.loc[countries_df['Country'] == 'Netherlands', 'Long'] = 5.2913
 countries_df.loc[countries_df['Country'] == 'Canada', 'Lat'] = 59.050000
 countries_df.loc[countries_df['Country'] == 'Canada', 'Long'] = -112.833333
 
-countries_df['Active'] = countries_df['Confirmed'] - countries_df['Recovered'] -countries_df['Deaths']
+countries_df['Active'] = countries_df['Confirmed'] - countries_df['Recovered'] - countries_df['Deaths']
 
 # Description for map
 countries_df['Description'] = countries_df['Country'] + '<br>' \
@@ -397,7 +397,7 @@ news_feed = html.Div([
                              #height=600,
                              #width=1845
                  ),
-                 html.Div(dbc.Table.from_dataframe(tweets[['Handle','Date','Tweet']],striped=True, bordered=True, hover=True,className='table-info'),
+                 html.Div(dbc.Table.from_dataframe(df_tweets[['Handle','Date','Tweet']],striped=True, bordered=True, hover=True,className='table-info'),
                           style={'width':'49.6%','height':'42rem','display':'inline-block','overflowY':'auto','marginLeft':'.7%'})
              ],className='row')
 ])

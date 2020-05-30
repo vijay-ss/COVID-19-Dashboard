@@ -6,7 +6,7 @@ begin_date = dt.date.today() - dt.timedelta(days=1)
 end_date = dt.date.today()
 limit = 100
 language = 'english'
-tweet_contents = ['Covid', 'covid', 'Covid-19', 'Coronavirus']
+tweet_contents = ['Covid', 'covid', 'Covid-19', 'covid19', 'Coronavirus']
 
 #if __name__ == '__main__':
 list_of_tweets = query_tweets(tweet_contents, begindate=begin_date, enddate=end_date, limit=limit, lang=language)
