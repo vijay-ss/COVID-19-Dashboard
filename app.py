@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 from datetime import date, timedelta
 
-import Twitterscraper
+import twitter
 tweets = pd.read_csv(r'data/covid_tweets.csv')
 
 ### Data Pre-processing ###
