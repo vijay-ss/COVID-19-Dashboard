@@ -13,3 +13,4 @@ pandas
 plotly
 plotly-express
 datetime
+twitterscraper
