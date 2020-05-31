@@ -1,8 +1,8 @@
+"""DATA PRE-PROCESSING"""
+
 import pandas as pd
 
-### Data Pre-processing ###
-# todo create a separate etl file to do the pre-processing and call it
-
+# import raw files from JHU CSSE github
 url_1 = 'https://raw.githubusercontent.com/datasets/covid-19/master/data/time-series-19-covid-combined.csv'
 url_2 = 'https://raw.githubusercontent.com/datasets/covid-19/master/data/countries-aggregated.csv'
 url_3 = 'https://raw.githubusercontent.com/datasets/covid-19/master/data/key-countries-pivoted.csv'
@@ -12,7 +12,7 @@ countries = pd.read_csv(url_2, index_col=0,parse_dates=[0]).reset_index()
 countries_pv = pd.read_csv(url_3, index_col=0,parse_dates=[0]).reset_index()
 ww_agg = pd.read_csv(url_4, index_col=0,parse_dates=[0]).reset_index()
 
-# convert Date object to Datetime
+# convert date objects to datetime
 countries['Date'] = pd.to_datetime(countries['Date'])
 countries_pv['Date'] = pd.to_datetime(countries_pv['Date'])
 time_series['Date'] = pd.to_datetime(time_series['Date'])

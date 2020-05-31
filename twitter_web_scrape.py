@@ -1,3 +1,5 @@
+"""GET COVID RELATED TWEETS"""
+
 from twitterscraper import query_tweets
 import datetime as dt
 import pandas as pd

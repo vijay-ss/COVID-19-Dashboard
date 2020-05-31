@@ -1,4 +1,3 @@
-# Import libraries
 import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
@@ -10,6 +9,7 @@ import pandas as pd
 import numpy as np
 from datetime import date, timedelta
 
+"""GATHER INPUT FILES"""
 import twitter_web_scrape
 df_tweets = pd.read_csv(r'data/covid_tweets.csv')
 
@@ -35,7 +35,7 @@ canada_province['Date'] = pd.to_datetime(canada_province['Date'])
 # Canada day over day
 canada_province['Diff'] = canada_province.groupby('Province/State')['Confirmed'].diff(periods=1)
 
-'''PLOTS'''
+"""CREATE PLOTS"""
 
 fig_area = px.area(global_melt
               ,x="Date"
@@ -96,7 +96,6 @@ fig_can = px.line(x=canada_df['Date'],
         render_mode="svg",
         template='plotly_dark'
 )
-# Add labels
 fig_can.update_layout(
     title = "Timeline of Confirmed Cases - by Province",
     xaxis_title = "Date",
@@ -113,7 +112,6 @@ fig_dod = px.line(x=canada_province['Date'],
         render_mode="svg",
         template='plotly_dark'
 )
-# Add labels
 fig_dod.update_layout(
     title = "Day over day - by Province",
     xaxis_title = "Date",
@@ -131,7 +129,7 @@ default_layout = {
     'hovermode': 'x',
 }
 
-# optional color scheme
+# base color scheme
 dash_colors = {
     'background': '#111111',
     'text': '#BEBEBE',
@@ -304,7 +302,9 @@ df_ranking[['Confirmed','Deaths','Recovered','Active']] = df_ranking[['Confirmed
 
 page_3_layout = html.Div([
     html.Div(id='page-3'),
-    html.Div(dbc.Table.from_dataframe(df_ranking.head(20),striped=True, bordered=True, hover=True))
+    html.Div(html.H2('Global Ranking - Top 20'),style={'backgroundColor': dash_colors['background'],'padding':'.5rem'}),
+    html.Div(dbc.Table.from_dataframe(df_ranking.head(20),striped=True, bordered=True, hover=True),
+             style={'marginTop':'.5%'})
 ], style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'})
 
 page_4_layout = html.Div([
@@ -339,7 +339,7 @@ news_feedx = html.Div([
 ])
 # todo figure out how to scale the twitter table
 
-SIDEBAR_STYLE = {
+newsfeed_div_style = {
     "position": "fixed", #static #relative
     "width": "23.7%",
     'height': '30rem',
@@ -352,17 +352,17 @@ SIDEBAR_STYLE = {
     'display': 'block'
 }
 
-content_style = {
+twitter_div_style = {
     "position": "fixed",
     "width": "72.5%",
-    'height': '30rem',
+    'height': '22rem',
     'marginLeft': '26%',
     'marginRight': '1.5%',
     'marginBottom': '.5%',
     'marginTop': '.5%',
     "padding": "1rem",
     "background-color": dash_colors['background'],
-    'overflowY': 'auto',
+    #'overflowY': 'auto',
     'display': 'block'
 
 }
@@ -374,16 +374,16 @@ news_feed = html.Div([
                          #src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.cbc.ca%2Fcmlink%2Frss-world&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
                          style={'width':'100%','height':'25rem', 'border':'none'}),
                           )
-   ],style=SIDEBAR_STYLE
+   ],style=newsfeed_div_style
 )
 
 content = html.Div([
-    html.H2('Related Tweets'),
+    html.Div(html.H2('Related Tweets'), style={'backgroundColor': dash_colors['background'],'padding':'.5rem'}),
     html.Div(id='tweets',
              children=[
                  dbc.Table.from_dataframe(df_tweets[['Handle','Date','Tweet']],striped=True, bordered=True, hover=True, className='table-info', size='sm'),
-             ],style={'height': '15rem'})
-], style=content_style)
+             ], style={'height': '15rem','marginTop':'.5%','overflowY':'scroll'})
+], style=twitter_div_style)
 
 # Display correct page based on user selection
 @app.callback(Output('page-content', 'children'),
@@ -398,7 +398,7 @@ def display_page(pathname):
     elif pathname == '/page-4':
         return number_plates, page_4_layout
     else:
-        return number_plates, page_1_layout
+        return number_plates, news_feed, content
 
 
 if __name__ == '__main__':
