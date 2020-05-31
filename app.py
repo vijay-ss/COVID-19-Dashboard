@@ -415,7 +415,7 @@ def display_page(pathname):
     elif pathname == '/page-4':
         return number_plates, page_4_layout
     else:
-        return number_plates, news_feed
+        return number_plates, page_1_layout
 
 
 if __name__ == '__main__':
