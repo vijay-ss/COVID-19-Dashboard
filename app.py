@@ -134,7 +134,7 @@ fig_mapbox = px.scatter_mapbox(
     lat=formatted_gdf['Lat'],
     lon=formatted_gdf['Long'],
     hover_name=formatted_gdf['Description'],
-    size=formatted_gdf['Confirmed'].pow(0.3),
+    size=formatted_gdf['Confirmed'].pow(0.3), #todo logarithmic scale
     range_color=[0, 4000],
     opacity=0.6,
     size_max=30,
@@ -384,7 +384,7 @@ page_4_layout = html.Div([
 
 # https://www.cbc.ca/cmlink/rss-world
 # width:107.7,#height=600,#width=1845
-news_feed = html.Div([
+news_feedx = html.Div([
     #html.Div(id='page-2'),
     html.Div(id='news',
              style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'},
@@ -395,12 +395,58 @@ news_feed = html.Div([
                                  style={'width':'100%','height':'42rem','display':'inline-block', 'border':'none'}),
                           style={'width':'49.6%'}),
                  html.Div(dbc.Table.from_dataframe(df_tweets[['Handle','Date','Tweet']],striped=True, bordered=True, hover=True,className='table-info',
-                                                   style={'width':'100%','word-wrap':'break-word'}),
+                                                   style={'width':'100%'}),
                           style={'width':'49.6%','height':'42rem','display':'inline-block','marginLeft':'.7%','overflowY':'auto'}
                  )
              ],className='row')
 ])
 # todo figure out how to scale the twitter table
+
+SIDEBAR_STYLE = {
+    "position": "fixed", #static #relative
+    "width": "23.7%",
+    'height': '30rem',
+    'marginLeft': '1.5%',
+    'marginRight': '1.5%',
+    'marginBottom': '.5%',
+    'marginTop': '.5%',
+    "padding": "1rem",
+    "background-color": dash_colors['background'],
+    'display': 'block'
+}
+
+content_style = {
+    "position": "fixed",
+    "width": "72.5%",
+    'height': '30rem',
+    'marginLeft': '26%',
+    'marginRight': '1.5%',
+    'marginBottom': '.5%',
+    'marginTop': '.5%',
+    "padding": "1rem",
+    "background-color": dash_colors['background'],
+    'overflowY': 'auto',
+    'display': 'block'
+
+}
+
+news_feed = html.Div([
+    html.H2('News Feed'),
+    html.Div(html.Iframe(id='rss',
+                         src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.aljazeera.com%2Fxml%2Frss%2Fall.xml&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
+                         #src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.cbc.ca%2Fcmlink%2Frss-world&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
+                         style={'width':'100%','height':'25rem', 'border':'none'}),
+                          )
+   ],style=SIDEBAR_STYLE
+)
+
+content = html.Div([
+    html.H2('Related Tweets'),
+    html.Div(id='tweets',
+             children=[
+                 dbc.Table.from_dataframe(df_tweets[['Handle','Date','Tweet']],striped=True, bordered=True, hover=True, className='table-info', size='sm'),
+             ],style={'height': '15rem'})
+], style=content_style)
 
 # Display correct page based on user selection
 @app.callback(Output('page-content', 'children'),
@@ -409,13 +455,13 @@ def display_page(pathname):
     if pathname == '/page-1':
         return number_plates, page_1_layout
     elif pathname == '/page-2':
-        return number_plates, news_feed
+        return number_plates, news_feed, content
     elif pathname == '/page-3':
         return number_plates, page_3_layout
     elif pathname == '/page-4':
         return number_plates, page_4_layout
     else:
-        return number_plates, page_1_layout
+        return number_plates, news_feed, content
 
 
 if __name__ == '__main__':
