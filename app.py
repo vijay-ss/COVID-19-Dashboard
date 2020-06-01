@@ -12,12 +12,11 @@ import numpy as np
 from datetime import date, timedelta
 
 """GATHER INPUT FILES"""
-import twitter_web_scrape
 
+import twitter_web_scrape
 df_tweets = pd.read_csv(r'data/covid_tweets.csv')
 
 import ETL
-
 countries_df = pd.read_csv(r'data/countries.csv')
 global_daily_count = pd.read_csv(r'data/global_daily_count.csv')
 global_melt = pd.read_csv(r'data/global_melt.csv')
