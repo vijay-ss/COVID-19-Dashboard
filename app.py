@@ -374,8 +374,8 @@ news_feed_layout = html.Div(id='news-page', style=page_margin, children=[
              children=[
                  html.H2('News Feed'),
                  html.Div(html.Iframe(id='rss',
-                                      #src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.aljazeera.com%2Fxml%2Frss%2Fall.xml&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
-                                      src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.cbc.ca%2Fcmlink%2Frss-world&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
+                                      src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.aljazeera.com%2Fxml%2Frss%2Fall.xml&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
+                                      #src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.cbc.ca%2Fcmlink%2Frss-world&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
                                       style={'width': '100%', 'height': '45rem', 'border': 'none', 'padding': '1rem'}),
                           )
              ], style=newsfeed_div_style),
@@ -391,7 +391,7 @@ news_feed_layout = html.Div(id='news-page', style=page_margin, children=[
                                    "background-color": dash_colors['background']}),
                  html.Div(html.P(' '), style={'backgroundColor': dash_colors['background'], 'padding': '.5rem'}),
                  html.Div(html.H2('Coming Soon - Sentiment Analysis'),
-                          style={'backgroundColor': dash_colors['background'], 'padding': '.5rem', 'marginTop': '1%'}),
+                          style={'backgroundColor': dash_colors['background'], 'marginTop': '1%'}),
                  html.Div()
              ], style=twitter_div_style)
 ], className='row')
