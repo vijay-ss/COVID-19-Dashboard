@@ -13,7 +13,7 @@ from datetime import date, timedelta
 
 """GATHER INPUT FILES"""
 
-import twitter_web_scrape
+#import twitter_web_scrape
 df_tweets = pd.read_csv(r'data/covid_tweets.csv')
 
 import ETL
@@ -365,7 +365,7 @@ twitter_div_style = {
     "width": "74.8%",
     'height': '22rem',
     'marginLeft': '.8%',
-    #"padding": "1rem",
+    "padding": "1rem",
     #"background-color": dash_colors['background'],
 }
 
@@ -376,7 +376,7 @@ news_feed_layout = html.Div(id='news-page', style=page_margin, children=[
                  html.Div(html.Iframe(id='rss',
                                       src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.aljazeera.com%2Fxml%2Frss%2Fall.xml&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
                                       #src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.cbc.ca%2Fcmlink%2Frss-world&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
-                                      style={'width': '100%', 'height': '45rem', 'border': 'none', 'padding': '1rem'}),
+                                      style={'width': '100%', 'height': '45rem', 'border': 'none', 'padding': '.5rem'}),
                           )
              ], style=newsfeed_div_style),
     html.Div(id='twitter',
@@ -389,6 +389,7 @@ news_feed_layout = html.Div(id='news-page', style=page_margin, children=[
                                                        bordered=True, hover=True, className='table-info', size='sm')]
                           , style={'height': '15.5rem', 'overflowY': 'auto', 'padding': '1rem',
                                    "background-color": dash_colors['background']}),
+
                  html.Div(html.P(' '), style={'backgroundColor': dash_colors['background'], 'padding': '.5rem'}),
                  html.Div(html.H2('Coming Soon - Sentiment Analysis'),
                           style={'backgroundColor': dash_colors['background'], 'marginTop': '1%'}),
@@ -409,7 +410,7 @@ def display_page(pathname):
     elif pathname == '/page-4':
         return number_plates, page_4_layout
     else:
-        return number_plates, page_1_layout
+        return number_plates, news_feed_layout
 
 
 if __name__ == '__main__':
