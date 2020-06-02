@@ -368,7 +368,7 @@ twitter_div_style = {
     "width": "74.8%",
     'height': '22rem',
     'marginLeft': '.8%',
-    "padding": "1rem",
+    #"padding": "1rem",
     #"background-color": dash_colors['background'],
 }
 
