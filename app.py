@@ -14,7 +14,10 @@ from datetime import date, timedelta
 """GATHER INPUT FILES"""
 
 #import twitter_web_scrape
-df_tweets = pd.read_csv(r'data/covid_tweets.csv')
+#df_tweets = pd.read_csv(r'data/covid_tweets.csv')
+url = 'https://raw.githubusercontent.com/vijay-ss/COVID-19-Dashboard/master/data/covid_tweets.csv'
+df_tweets = pd.read_csv(url, index_col=0, parse_dates=[0]).reset_index()
+
 
 import ETL
 countries_df = pd.read_csv(r'data/countries.csv')
@@ -410,7 +413,7 @@ def display_page(pathname):
     elif pathname == '/page-4':
         return number_plates, page_4_layout
     else:
-        return number_plates, news_feed_layout
+        return number_plates, page_1_layout
 
 
 if __name__ == '__main__':
