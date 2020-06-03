@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
-# import plotly.graph_objects as go
+import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
 import numpy as np
@@ -27,6 +27,12 @@ canada_df = pd.read_csv(r'data/canada.csv')
 canada_province = pd.read_csv(r'data/canada_by_province.csv')
 
 ### Data Pre-processing ###
+
+# Twitter EDA #todo move to separate file when twitterscraper is functioning
+df_tweets['Category'] = df_tweets['compound'].apply(lambda x: 'Positive'if x > 0 else \
+    ('Negative' if x < 0 else 'Neutral'))
+
+
 
 # convert Date object to Datetime
 countries_df['Date'] = pd.to_datetime(countries_df['Date'])
@@ -122,6 +128,20 @@ fig_dod.update_layout(
     legend_title="Province"
 )
 
+# Twitter sentiment pie chart
+fig_pie = go.Figure(data=[go.Pie(
+    labels = df_tweets['Category'].unique(),
+    values = df_tweets['Category'].value_counts(),
+    hole=.3,
+    pull=[0,0,0.1]
+)])
+fig_pie.update_layout(
+title='Sentiment Mix of Covid-19 Related Tweets',
+    template='plotly_dark'
+)
+
+
+
 default_layout = {
     'autosize': True,
     'xaxis': {'title': None},
@@ -169,9 +189,7 @@ delta = global_daily_count[global_daily_count['Date'] == global_daily_count['Dat
 external_stylesheets = ['https://codepen.io/unicorndy/pen/GRJXrvP.css',
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css']
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SLATE]
-                )
-# https://dash-bootstrap-components.opensource.faculty.ai/docs/themes/
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SLATE])
 server = app.server
 app.title = 'nCov-19'
 
@@ -353,12 +371,11 @@ page_4_layout = html.Div([
 ])
 
 # https://www.cbc.ca/cmlink/rss-world
-# width:107.7,#height=600,#width=1845
 # todo figure out how to scale the twitter table
 
 newsfeed_div_style = {
     "width": "24.4%",
-    'height': '50rem',
+    'height': '53rem',
     "padding": "1rem",
     "background-color": dash_colors['background'],
     'display': 'block',
@@ -379,7 +396,7 @@ news_feed_layout = html.Div(id='news-page', style=page_margin, children=[
                  html.Div(html.Iframe(id='rss',
                                       src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.aljazeera.com%2Fxml%2Frss%2Fall.xml&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
                                       #src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.cbc.ca%2Fcmlink%2Frss-world&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
-                                      style={'width': '100%', 'height': '45rem', 'border': 'none', 'padding': '.5rem'}),
+                                      style={'width': '100%', 'height': '49rem', 'border': 'none', 'padding': '.5rem'}),
                           )
              ], style=newsfeed_div_style),
     html.Div(id='twitter',
@@ -394,9 +411,10 @@ news_feed_layout = html.Div(id='news-page', style=page_margin, children=[
                                    "background-color": dash_colors['background']}),
 
                  html.Div(html.P(' '), style={'backgroundColor': dash_colors['background'], 'padding': '.5rem'}),
-                 html.Div(html.H2('Coming Soon - Sentiment Analysis'),
+                 html.Div(html.H2('Sentiment Analysis'),
                           style={'backgroundColor': dash_colors['background'], 'marginTop': '1%'}),
-                 html.Div()
+                 html.Div(dcc.Graph(id='twitter-pie', figure=fig_pie),
+                          style={'display':'block', 'width':'50%'})
              ], style=twitter_div_style)
 ], className='row')
 
