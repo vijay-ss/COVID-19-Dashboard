@@ -144,19 +144,21 @@ title='Sentiment Mix of Covid-19 Related Tweets',
 )
 
 # Twitter phrase
-fig_phrase = go.Figure(data=[go.Table(
-    header=dict(values=list(daily_twitter_phrases.columns),
-                fill_color= 'rgb(29,161,242)',
-                font=dict(color='white', size=14),
-                align='left'),
-    cells=dict(values=[daily_twitter_phrases.Phrase, daily_twitter_phrases.Frequency],
-               fill_color='rgb(245,248,250)',
-               font=dict(color='black', size=12),
-               align='left'))
-])
+fig_phrase = go.Figure(data=[go.Table(columnwidth=[20, 60, 40],
+                                      header=dict(values=list(daily_twitter_phrases.columns),
+                                                  fill_color='rgb(29,161,242)',
+
+                                                  font=dict(color='white', size=14),
+                                                  align='left'),
+                                      cells=dict(values=[daily_twitter_phrases.Rank, daily_twitter_phrases.Phrase,
+                                                         daily_twitter_phrases.Frequency],
+                                                 fill_color='rgb(245,248,250)',
+                                                 font=dict(color='black', size=12),
+                                                 align='left'))
+                             ])
 fig_phrase.update_layout(
-title='Most Common Tweet Contents from ' + (date.today() - timedelta(days=1)).strftime('%d %b, %Y'),
-template='plotly_dark')
+    title='Most Common Tweet Contents from ' + (date.today() - timedelta(days=1)).strftime('%d %b, %Y'),
+    template='plotly_dark')
 
 # Twitter Word Cloud
 # text = df_tweets.Tweet.values
@@ -444,7 +446,8 @@ news_feed_layout = html.Div(id='news-page', style=page_margin, children=[
                           style={'backgroundColor': dash_colors['background'], 'padding': '.5rem'}),
                  html.Div(id='tweets',
                           children=[
-                              dbc.Table.from_dataframe(df_tweets[['Handle', 'Date', 'Tweet']], striped=True,
+                              dbc.Table.from_dataframe(df_tweets[['Handle', 'Date', 'Tweet']].sample(frac=1),
+                                                       striped=True,
                                                        bordered=True, hover=True, className='table-info', size='sm')]
                           , style={'height': '15.5rem', 'overflowY': 'auto', 'padding': '1rem',
                                    "background-color": dash_colors['background']}),

@@ -95,6 +95,8 @@ p['Diff'] = p.groupby('Province/State')['Confirmed'].diff(periods=1)
 
 # Twitter phrase: rename columns
 daily_twitter_phrases.rename(columns={'gram':'Phrase', 'counts':'Frequency'}, inplace=True)
+daily_twitter_phrases['Rank'] = daily_twitter_phrases.index + 1
+daily_twitter_phrases = daily_twitter_phrases[['Rank', 'Phrase', 'Frequency']]
 
 #export to csv files
 countries_df.to_csv('data/countries.csv', index=False)
