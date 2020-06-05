@@ -1,5 +1,7 @@
 """MAIN APP"""
 
+import flask
+import os
 import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
@@ -36,13 +38,15 @@ daily_twitter_phrases = pd.read_csv(r'data/twitter_phrases.csv')
 df_tweets['Category'] = df_tweets['compound'].apply(lambda x: 'Positive'if x > 0 else \
     ('Negative' if x < 0 else 'Neutral'))
 
-
 # convert Date object to Datetime
 countries_df['Date'] = pd.to_datetime(countries_df['Date'])
 global_daily_count['Date'] = pd.to_datetime(global_daily_count['Date'])
 global_melt['Date'] = pd.to_datetime(global_melt['Date'])
 canada_df['Date'] = pd.to_datetime(canada_df['Date'])
 canada_province['Date'] = pd.to_datetime(canada_province['Date'])
+
+# JHU update date
+JHU_max_date = global_daily_count['Date'].max()
 
 # Canada day over day
 canada_province['Diff'] = canada_province.groupby('Province/State')['Confirmed'].diff(periods=1)
@@ -227,12 +231,13 @@ delta = global_daily_count[global_daily_count['Date'] == global_daily_count['Dat
 
 '''BEGIN DASH APP'''
 
-external_stylesheets = ['https://codepen.io/unicorndy/pen/GRJXrvP.css',
-                        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css']
-
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SLATE])
 server = app.server
-app.title = 'nCov-19'
+app.title = 'Covid-19 Tracker'
+
+@server.route('/favicon.ico')
+def favicon():
+    return flask.send_from_directory(os.path.join(server.root_path, 'static'), 'favicon.ico')
 
 app.layout = html.Div(children=[
     html.H1(children='Covid-19 Interactive Tracker',
