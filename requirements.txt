@@ -5,12 +5,11 @@ dash-bootstrap-components
 dash-renderer
 dash-table
 dask
-flask
+Flask
 Flask-Compress
 gunicorn
 numpy
 pandas
 plotly
-plotly-express
 datetime
 twitterscraper
