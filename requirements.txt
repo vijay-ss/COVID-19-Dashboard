@@ -11,5 +11,7 @@ gunicorn
 numpy
 pandas
 plotly
+plotly-express
+plotly-graph-objects
 datetime
 twitterscraper
