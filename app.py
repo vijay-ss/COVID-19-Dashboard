@@ -10,16 +10,17 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 from datetime import date, timedelta
+import base64
 
 """GATHER INPUT FILES"""
 
-#import twitter_web_scrape
-#df_tweets = pd.read_csv(r'data/covid_tweets.csv')
+# import twitter_web_scrape
+# df_tweets = pd.read_csv(r'data/covid_tweets.csv')
 url = 'https://raw.githubusercontent.com/vijay-ss/COVID-19-Dashboard/master/data/covid_tweets.csv'
 df_tweets = pd.read_csv(url, index_col=0, parse_dates=[0]).reset_index()
 
-
 import ETL
+
 countries_df = pd.read_csv(r'data/countries.csv')
 global_daily_count = pd.read_csv(r'data/global_daily_count.csv')
 global_melt = pd.read_csv(r'data/global_melt.csv')
@@ -30,10 +31,8 @@ daily_twitter_phrases = pd.read_csv(r'data/twitter_phrases.csv')
 ### Data Pre-processing ###
 
 # Twitter EDA #todo move to separate file when twitterscraper is functioning
-df_tweets['Category'] = df_tweets['compound'].apply(lambda x: 'Positive'if x > 0 else \
+df_tweets['Category'] = df_tweets['compound'].apply(lambda x: 'Positive' if x > 0 else \
     ('Negative' if x < 0 else 'Neutral'))
-
-
 
 # convert Date object to Datetime
 countries_df['Date'] = pd.to_datetime(countries_df['Date'])
@@ -84,8 +83,8 @@ fig_mapbox = px.scatter_mapbox(
     lon=formatted_gdf['Long'],
     hover_name=formatted_gdf['Description'],
     size=np.where(formatted_gdf['Confirmed'] > 0, np.ceil(np.log(formatted_gdf['Confirmed'])), 0),
-        #.pow(0.3),
-    range_color=[0, 300000],
+    # .pow(0.3),
+    range_color=[0, 200000],
     opacity=0.6,
     size_max=30,
     zoom=1.3,
@@ -132,13 +131,13 @@ fig_dod.update_layout(
 
 # Twitter sentiment pie chart
 fig_pie = go.Figure(data=[go.Pie(
-    labels = df_tweets['Category'].unique(),
-    values = df_tweets['Category'].value_counts(),
+    labels=df_tweets['Category'].unique(),
+    values=df_tweets['Category'].value_counts(),
     hole=.3,
-    pull=[0,0,0.1]
+    pull=[0, 0, 0.1]
 )])
 fig_pie.update_layout(
-title='Sentiment Mix of Covid-19 Related Tweets',
+    title='Sentiment Mix of Covid-19 Related Tweets',
     template='plotly_dark'
 )
 
@@ -158,7 +157,6 @@ fig_phrase = go.Figure(data=[go.Table(columnwidth=[20, 60, 40],
 fig_phrase.update_layout(
     title='Most Common Tweet Contents from ' + (date.today() - timedelta(days=1)).strftime('%d %b, %Y'),
     template='plotly_dark')
-
 
 default_layout = {
     'autosize': True,
@@ -193,6 +191,13 @@ def ticker_color(tick_value):
         return dash_colors['green']
 
 
+def ticker_color_rec(tick_value):
+    if tick_value > 0:
+        return dash_colors['green']
+    else:
+        return dash_colors['blue']
+
+
 # todo update function to include colors for all metric types
 
 # Latest count per country for number plates
@@ -202,14 +207,81 @@ global_total = global_daily_count.join(
 global_total = global_total[global_daily_count['Date'] == global_total['Date'].max()]
 delta = global_daily_count[global_daily_count['Date'] == global_daily_count['Date'].max() - timedelta(days=1)]
 
+# Icons for about page
+twitter_icon = 'twitter_icon.png'
+linkedin_icon = 'linkedin_icon.png'
+email_icon = 'email_icon.png'
+
+encoded_twitter = base64.b64encode(open(twitter_icon, 'rb').read())
+encoded_linkedin = base64.b64encode(open(linkedin_icon, 'rb').read())
+encoded_email = base64.b64encode(open(email_icon, 'rb').read())
+
+
+about_app = html.Div(
+    children=[
+        html.P('''
+        This interactive dashboard is aimed at providing users with a daily summary of the global situation 
+        on Covid-19. It is intended for those reluctant to be bombarded by daily news updates, 
+        while seeking a clear and concise objective breakdown of the numbers. There is also a 
+        snapshot for Canadian cases, and can be expanded to other regions in the future as necessary.
+        '''),
+        html.P('''
+        This dashboard demonstrates the power of Open Source data combined with the python
+        Plotly-Dash libraries, with the ability to display powerful visualizations to the end user.
+        '''),
+        html.P('''
+        This particular dashboard is optimized for viewing on a desktop environment due to the nature of the interactive
+        plots. Mobile viewing is possible, however not optimal.
+        '''),
+        html.P('''
+        All source data is available in the links below - as well as the Github repository. 
+        Credit is given to the following teams for proving the respective data:
+        '''),
+        html.Ul([
+            html.Li('John Hopkins University - Dataset for Covid-19 cases'),
+            html.Li('Georgia State University - Common twitter mentions for Covid-19')
+        ]),
+        html.P('''
+        A special thanks also goes out to the front-line medical teams who are tirelessly fighting to flatten the 
+        curve.
+        '''),
+        html.Ul([
+            html.Li(html.A('John Hopkins University CSSE dataset',
+                           href='https://github.com/CSSEGISandData/COVID-19', target='_blank')),
+            html.Li(html.A('Georgia State University Panacea Lab Twitter dataset',
+                           href='https://github.com/thepanacealab/covid19_twitter', target='_blank')),
+            html.Li(html.A('Open Source Dashboard Code',
+                           href='https://github.com/vijay-ss/COVID-19-Dashboard', target='_blank'))
+        ]),
+        html.Div(id='contact-info', children=[
+            html.Img(src='data:image/png;base64,{}'.format(encoded_linkedin.decode())),
+            html.A('Linkdin', href='https://www.linkedin.com/in/vijay-ss/', target='_blank'),
+            html.A(' '),
+            html.Img(src='data:image/png;base64,{}'.format(encoded_twitter.decode())),
+            html.A('Twitter', href='https://twitter.com/df_vijay', target='_blank'),
+            html.A(' '),
+            html.Img(src='data:image/png;base64,{}'.format(encoded_email.decode())
+                     , style={'max-width': '40px', 'max-height': '40px'}),
+            html.A(' '),
+            html.A('Email', href='mailto:vijay_saddi@outlook.com', target='_blank'),
+        ], style={'textAlign': 'center'},
+        ),
+    ]
+)
+
 '''BEGIN DASH APP'''
 
 external_stylesheets = ['https://codepen.io/unicorndy/pen/GRJXrvP.css',
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css']
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SLATE])
+external_scripts = [{
+    'type': 'text/javascript',
+    'src': '//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5edbdf00d020a898'
+}]
+
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SLATE], external_scripts=external_scripts)
 server = app.server
-app.title = 'nCov-19 Tracker'
+app.title = 'Covid-19 Tracker'
 
 app.layout = html.Div(children=[
     html.H1(children='Covid-19 Interactive Tracker',
@@ -233,6 +305,14 @@ app.layout = html.Div(children=[
         dbc.Button(dcc.Link('World News', href='/page-2'), id="news-button", color='primary', className="mr-1"),
         dbc.Button(dcc.Link('Ranking', href='/page-3'), id="top-button", color='primary', className="mr-1"),
         dbc.Button(dcc.Link('Canada', href='/page-4'), id="canada-button", color='primary', className="mr-1"),
+        dbc.Button('About', id='open', active=False),
+        dbc.Modal([
+            # the contents should all be stored in a Div
+            dbc.ModalHeader(children=[html.P('Covid-19 Open Source Interactive Dashboard')],
+                            style={'margin': '0 auto'}),
+            dbc.ModalBody(children=[about_app]),
+            dbc.ModalFooter(dbc.Button('Close', id='close', className='ml-auto', size='sm'))
+        ], id='modal', size='lg', scrollable=True, centered=True, autoFocus=True),
         html.Div(id='page-content'),
         # html.Span(id='button-container')
     ], style={'textAlign': 'center', 'width': '100%', 'float': 'center', 'display': 'inline-block',
@@ -311,7 +391,7 @@ number_plates = html.Div(id='number-plate',
                                                                'fontSize': 50},
                                                         children='{:,.0f}'.format(int(global_total['Recovered']))),
                                                 html.P(style={'textAlign': 'center',
-                                                              'color': dash_colors['green'], 'fontSize': 20},
+                                                              'color': ticker_color_rec(int(global_total['Recovered']) - int(delta['Recovered'])), 'fontSize': 20},
                                                        children='{0:+,d}'.format(
                                                            int(global_total['Recovered']) - int(delta['Recovered']))
                                                                 + ' (' + global_total['Recovered_pct'].map(
@@ -403,8 +483,8 @@ twitter_div_style = {
     "width": "74.8%",
     'height': '22rem',
     'marginLeft': '.8%',
-    #"padding": "1rem",
-    #"background-color": dash_colors['background'],
+    # "padding": "1rem",
+    # "background-color": dash_colors['background'],
 }
 
 news_feed_layout = html.Div(id='news-page', style=page_margin, children=[
@@ -413,7 +493,7 @@ news_feed_layout = html.Div(id='news-page', style=page_margin, children=[
                  html.H2('News Feed'),
                  html.Div(html.Iframe(id='rss',
                                       src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.aljazeera.com%2Fxml%2Frss%2Fall.xml&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
-                                      #src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.cbc.ca%2Fcmlink%2Frss-world&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
+                                      # src='https://www.rssdog.com/index.php?url=https%3A%2F%2Fwww.cbc.ca%2Fcmlink%2Frss-world&mode=html&showonly=&maxitems=0&showdescs=1&desctrim=0&descmax=0&tabwidth=100%25&showdate=1&linktarget=_blank&bordercol=transparent&headbgcol=transparent&headtxtcol=%23ffffff&titlebgcol=transparent&titletxtcol=%23ffffff&itembgcol=transparent&itemtxtcol=%23ffffff&ctl=0',
                                       style={'width': '100%', 'height': '49rem', 'border': 'none', 'padding': '.5rem'}),
                           )
              ], style=newsfeed_div_style),
@@ -439,6 +519,22 @@ news_feed_layout = html.Div(id='news-page', style=page_margin, children=[
                  ], className='row')
              ], style=twitter_div_style)
 ], className='row')
+
+# share = html.Div(children=[
+#     html.Iframe(src='//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5edbdf00d020a898', lang='text/javascript')
+# ])
+
+# Info modal window
+@app.callback(
+    Output("modal", "is_open"),
+    [Input("open", "n_clicks"), Input("close", "n_clicks")],
+    [State("modal", "is_open")],
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
 
 # Display correct page based on user selection
 @app.callback(Output('page-content', 'children'),
