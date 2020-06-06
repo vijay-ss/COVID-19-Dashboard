@@ -1,28 +1,18 @@
 """DATA PRE-PROCESSING"""
 
 import pandas as pd
-import datetime as dt
 
-# import raw daily files from JHU CSSE github
+# import raw files from JHU CSSE github
 url_1 = 'https://raw.githubusercontent.com/datasets/covid-19/master/data/time-series-19-covid-combined.csv'
 url_2 = 'https://raw.githubusercontent.com/datasets/covid-19/master/data/countries-aggregated.csv'
 url_3 = 'https://raw.githubusercontent.com/datasets/covid-19/master/data/key-countries-pivoted.csv'
 url_4 = 'https://raw.githubusercontent.com/datasets/covid-19/master/data/worldwide-aggregated.csv'
-
-# import raw daily tweet file from GSU github
-url_tweet = 'https://raw.githubusercontent.com/thepanacealab/covid19_twitter/master/dailies/' + \
-            (dt.date.today() - dt.timedelta(days=3)).strftime('%Y-%m-%d') + '/' + \
-            (dt.date.today() - dt.timedelta(days=3)).strftime('%Y-%m-%d') + \
-            '_top1000trigrams.csv'
-
-# convert to dataframes
 time_series = pd.read_csv(url_1, index_col=0,parse_dates=[0]).reset_index()
 countries = pd.read_csv(url_2, index_col=0,parse_dates=[0]).reset_index()
 countries_pv = pd.read_csv(url_3, index_col=0,parse_dates=[0]).reset_index()
 ww_agg = pd.read_csv(url_4, index_col=0,parse_dates=[0]).reset_index()
-daily_twitter_phrases = pd.read_csv(url_tweet, index_col=0,parse_dates=[0]).reset_index()
 
-# convert date objects to pandas datetime
+# convert date objects to datetime
 countries['Date'] = pd.to_datetime(countries['Date'])
 countries_pv['Date'] = pd.to_datetime(countries_pv['Date'])
 time_series['Date'] = pd.to_datetime(time_series['Date'])
@@ -93,15 +83,9 @@ canada_df['Active'] = canada_df['Confirmed'] - canada_df['Recovered'] - canada_d
 p = canada_df.groupby(['Date','Province/State'])['Confirmed'].sum().reset_index()
 p['Diff'] = p.groupby('Province/State')['Confirmed'].diff(periods=1)
 
-# Twitter phrase: rename columns
-daily_twitter_phrases.rename(columns={'gram':'Phrase', 'counts':'Frequency'}, inplace=True)
-daily_twitter_phrases['Rank'] = daily_twitter_phrases.index + 1
-daily_twitter_phrases = daily_twitter_phrases[['Rank', 'Phrase', 'Frequency']]
-
 #export to csv files
 countries_df.to_csv('data/countries.csv', index=False)
 global_daily_count.to_csv('data/global_daily_count.csv', index=False)
 global_melt.to_csv('data/global_melt.csv', index=False)
 canada_df.to_csv('data/canada.csv', index=False)
 p.to_csv('data/canada_by_province.csv', index=False)
-daily_twitter_phrases.to_csv('data/twitter_phrases.csv', index=False)
