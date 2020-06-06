@@ -25,6 +25,7 @@ global_daily_count = pd.read_csv(r'data/global_daily_count.csv')
 global_melt = pd.read_csv(r'data/global_melt.csv')
 canada_df = pd.read_csv(r'data/canada.csv')
 canada_province = pd.read_csv(r'data/canada_by_province.csv')
+daily_twitter_phrases = pd.read_csv(r'data/twitter_phrases.csv')
 
 ### Data Pre-processing ###
 
@@ -140,6 +141,22 @@ title='Sentiment Mix of Covid-19 Related Tweets',
     template='plotly_dark'
 )
 
+# Twitter phrase
+fig_phrase = go.Figure(data=[go.Table(columnwidth=[20, 60, 40],
+                                      header=dict(values=list(daily_twitter_phrases.columns),
+                                                  fill_color='rgb(29,161,242)',
+
+                                                  font=dict(color='white', size=14),
+                                                  align='left'),
+                                      cells=dict(values=[daily_twitter_phrases.Rank, daily_twitter_phrases.Phrase,
+                                                         daily_twitter_phrases.Frequency],
+                                                 fill_color='rgb(245,248,250)',
+                                                 font=dict(color='black', size=12),
+                                                 align='left'))
+                             ])
+fig_phrase.update_layout(
+    title='Most Common Tweet Contents from ' + (date.today() - timedelta(days=1)).strftime('%d %b, %Y'),
+    template='plotly_dark')
 
 
 default_layout = {
@@ -413,8 +430,12 @@ news_feed_layout = html.Div(id='news-page', style=page_margin, children=[
                  html.Div(html.P(' '), style={'backgroundColor': dash_colors['background'], 'padding': '.5rem'}),
                  html.Div(html.H2('Sentiment Analysis'),
                           style={'backgroundColor': dash_colors['background'], 'marginTop': '1%'}),
-                 html.Div(dcc.Graph(id='twitter-pie', figure=fig_pie),
-                          style={'display':'block', 'width':'50%'})
+                 html.Div(id='sentiment', children=[
+                     html.Div(dcc.Graph(id='twitter-pie', figure=fig_pie),
+                              style={'display': 'inline-block', 'width': '50%', 'marginLeft': '1%'}),
+                     html.Div(dcc.Graph(id='twitter-phrases', figure=fig_phrase),
+                              style={'display': 'inline-block', 'width': '47%', 'marginLeft': '1%'})
+                 ], className='row')
              ], style=twitter_div_style)
 ], className='row')
 
