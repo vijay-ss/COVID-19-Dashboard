@@ -45,9 +45,6 @@ global_melt['Date'] = pd.to_datetime(global_melt['Date'])
 canada_df['Date'] = pd.to_datetime(canada_df['Date'])
 canada_province['Date'] = pd.to_datetime(canada_province['Date'])
 
-# JHU update date
-JHU_max_date = global_daily_count['Date'].max()
-
 # Canada day over day
 canada_province['Diff'] = canada_province.groupby('Province/State')['Confirmed'].diff(periods=1)
 
