@@ -11,8 +11,8 @@ url_4 = 'https://raw.githubusercontent.com/datasets/covid-19/master/data/worldwi
 
 # import raw daily tweet file from GSU github
 url_tweet = 'https://raw.githubusercontent.com/thepanacealab/covid19_twitter/master/dailies/' + \
-            (dt.date.today() - dt.timedelta(days=2)).strftime('%Y-%m-%d') + '/' + \
-            (dt.date.today() - dt.timedelta(days=2)).strftime('%Y-%m-%d') + \
+            (dt.date.today() - dt.timedelta(days=3)).strftime('%Y-%m-%d') + '/' + \
+            (dt.date.today() - dt.timedelta(days=3)).strftime('%Y-%m-%d') + \
             '_top1000trigrams.csv'
 
 # convert to dataframes
