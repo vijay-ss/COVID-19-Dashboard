@@ -14,4 +14,3 @@ plotly
 plotly-express
 datetime
 twitterscraper
-base64
