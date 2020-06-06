@@ -234,7 +234,7 @@ app.title = 'Covid-19 Tracker'
 
 @server.route('/favicon.ico')
 def favicon():
-    return flask.send_from_directory(os.path.join(server.root_path, 'assets'), 'favicon.ico')
+    return flask.send_from_directory(os.path.join(server.root_path, 'static'), 'favicon.ico')
 
 app.layout = html.Div(children=[
     html.H1(children='Covid-19 Interactive Tracker',
