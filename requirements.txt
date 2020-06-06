@@ -5,7 +5,7 @@ dash-bootstrap-components
 dash-renderer
 dash-table
 dask
-Flask
+flask
 Flask-Compress
 gunicorn
 numpy
