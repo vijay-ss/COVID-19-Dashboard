@@ -211,19 +211,20 @@ delta = global_daily_count[global_daily_count['Date'] == global_daily_count['Dat
 twitter_icon = 'twitter_icon.png'
 linkedin_icon = 'linkedin_icon.png'
 email_icon = 'email_icon.png'
+github_icon = 'github_icon.png'
 
 encoded_twitter = base64.b64encode(open(twitter_icon, 'rb').read())
 encoded_linkedin = base64.b64encode(open(linkedin_icon, 'rb').read())
 encoded_email = base64.b64encode(open(email_icon, 'rb').read())
+encoded_github = base64.b64encode(open(github_icon, 'rb').read())
 
 
 about_app = html.Div(
     children=[
         html.P('''
         This interactive dashboard is aimed at providing users with a daily summary of the global situation 
-        on Covid-19. It is intended for those reluctant to be bombarded by daily news updates, 
-        while seeking a clear and concise objective breakdown of the numbers. There is also a 
-        snapshot for Canadian cases, and can be expanded to other regions in the future as necessary.
+        on Covid-19. It is intended for those seeking a concise breakdown of the numbers, without the constant news 
+        updates. There is also a snapshot for Canadian cases, and can be expanded to other regions in the future as necessary.
         '''),
         html.P('''
         This dashboard demonstrates the power of Open Source data combined with the python
@@ -260,8 +261,13 @@ about_app = html.Div(
             html.Img(src='data:image/png;base64,{}'.format(encoded_twitter.decode())),
             html.A('Twitter', href='https://twitter.com/df_vijay', target='_blank'),
             html.A(' '),
-            html.Img(src='data:image/png;base64,{}'.format(encoded_email.decode())
-                     , style={'max-width': '40px', 'max-height': '40px'}),
+            html.Img(src='data:image/png;base64,{}'.format(encoded_github.decode()),
+                     style={'max-width': '48px', 'max-height': '48px'}),
+            html.A(' '),
+            html.A('Github', href='https://github.com/vijay-ss', target='_blank'),
+            html.A(' '),
+            html.Img(src='data:image/png;base64,{}'.format(encoded_email.decode()),
+                     style={'max-width': '40px', 'max-height': '40px'}),
             html.A(' '),
             html.A('Email', href='mailto:vijay_saddi@outlook.com', target='_blank'),
         ], style={'textAlign': 'center'},
