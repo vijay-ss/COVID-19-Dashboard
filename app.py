@@ -83,19 +83,20 @@ fig_mapbox = px.scatter_mapbox(
     lat=formatted_gdf['Lat'],
     lon=formatted_gdf['Long'],
     hover_name=formatted_gdf['Description'],
-    size=formatted_gdf['Confirmed'].pow(0.3),  # todo logarithmic scale
-    range_color=[0, 4000],
+    size=np.where(formatted_gdf['Confirmed'] > 0, np.ceil(np.log(formatted_gdf['Confirmed'])), 0),
+        #.pow(0.3),
+    range_color=[0, 300000],
     opacity=0.6,
     size_max=30,
-    zoom=1.2,
+    zoom=1.3,
     animation_frame=countries_df['Date'].astype(str),
     # center=go.layout.mapbox.Center(lat=14,lon=21),
     template='plotly_dark',
     color=formatted_gdf['Confirmed'],
-    color_continuous_scale='portland',
+    color_continuous_scale='Portland',
     # color_discrete_sequence=px.colors.qualitative.Light24,
 )
-fig_mapbox.update_layout(autosize=True, coloraxis_showscale=False)
+fig_mapbox.update_layout(autosize=True, coloraxis_showscale=True)
 
 # Ontario Map
 fig_can = px.line(x=canada_df['Date'],
