@@ -16,11 +16,11 @@ url_tweet = 'https://raw.githubusercontent.com/thepanacealab/covid19_twitter/mas
             '_top1000trigrams.csv'
 
 # convert to dataframes
-time_series = pd.read_csv(url_1, index_col=0, parse_dates=[0]).reset_index()
-countries = pd.read_csv(url_2, index_col=0, parse_dates=[0]).reset_index()
-countries_pv = pd.read_csv(url_3, index_col=0, parse_dates=[0]).reset_index()
-ww_agg = pd.read_csv(url_4, index_col=0, parse_dates=[0]).reset_index()
-daily_twitter_phrases = pd.read_csv(url_tweet, index_col=0, parse_dates=[0]).reset_index()
+time_series = pd.read_csv(url_1, index_col=0,parse_dates=[0]).reset_index()
+countries = pd.read_csv(url_2, index_col=0,parse_dates=[0]).reset_index()
+countries_pv = pd.read_csv(url_3, index_col=0,parse_dates=[0]).reset_index()
+ww_agg = pd.read_csv(url_4, index_col=0,parse_dates=[0]).reset_index()
+daily_twitter_phrases = pd.read_csv(url_tweet, index_col=0,parse_dates=[0]).reset_index()
 
 # convert date objects to pandas datetime
 countries['Date'] = pd.to_datetime(countries['Date'])
