@@ -208,7 +208,7 @@ external_stylesheets = ['https://codepen.io/unicorndy/pen/GRJXrvP.css',
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SLATE])
 server = app.server
-app.title = 'nCov-19'
+app.title = 'nCov-19 Tracker'
 
 app.layout = html.Div(children=[
     html.H1(children='Covid-19 Interactive Tracker',
