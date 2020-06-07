@@ -32,6 +32,7 @@ Libraries and software used to create the environment and deploy the app
 
 1) John Hopkins University - Dataset for Covid-19 cases
 2) Georgia State University - Common twitter mentions for Covid-19
+3) Twitter - Covid-19 related tweets scraped using the 'twitterscraper' package
 
 
 ## Project Walkthrough
