@@ -20,7 +20,6 @@ url = 'https://raw.githubusercontent.com/vijay-ss/COVID-19-Dashboard/master/data
 df_tweets = pd.read_csv(url, index_col=0, parse_dates=[0]).reset_index()
 
 import ETL
-
 countries_df = pd.read_csv(r'data/countries.csv')
 global_daily_count = pd.read_csv(r'data/global_daily_count.csv')
 global_melt = pd.read_csv(r'data/global_melt.csv')
@@ -441,10 +440,10 @@ page_1_layout = html.Div([
                           style={'width': '49.6%', 'display': 'inline-block'})
              ], className='row'),
 
-    html.Div(id='world-map',
-             style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'},
-             children=[html.Div(dcc.Graph(id='global-outbreak', figure=fig_mapbox, style={'height': 800}))
-                       ])
+    # html.Div(id='world-map',
+    #          style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'},
+    #          children=[html.Div(dcc.Graph(id='global-outbreak', figure=fig_mapbox, style={'height': 800}))
+    #                    ])
 ])
 
 df_ranking = countries_df[countries_df['Date'] == countries_df['Date'].max()].groupby(['Country'])[
@@ -526,10 +525,6 @@ news_feed_layout = html.Div(id='news-page', style=page_margin, children=[
              ], style=twitter_div_style)
 ], className='row')
 
-# share = html.Div(children=[
-#     html.Iframe(src='//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5edbdf00d020a898', lang='text/javascript')
-# ])
-
 # Info modal window
 @app.callback(
     Output("modal", "is_open"),
@@ -556,7 +551,6 @@ def display_page(pathname):
         return number_plates, page_4_layout
     else:
         return number_plates, page_1_layout
-
 
 if __name__ == '__main__':
     app.run_server()
