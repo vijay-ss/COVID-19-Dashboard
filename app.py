@@ -81,8 +81,8 @@ fig_mapbox = px.scatter_mapbox(
     lat=formatted_gdf['Lat'],
     lon=formatted_gdf['Long'],
     hover_name=formatted_gdf['Description'],
-    size=np.where(formatted_gdf['Confirmed'] > 0, np.ceil(np.log(formatted_gdf['Confirmed'])), 0),
-    # .pow(0.3),
+    #size=np.where(formatted_gdf['Confirmed'] > 0, np.ceil(np.log(formatted_gdf['Confirmed'])), 0),
+    size=formatted_gdf['Confirmed'].pow(0.3),
     range_color=[0, 200000],
     opacity=0.6,
     size_max=30,
@@ -440,10 +440,10 @@ page_1_layout = html.Div([
                           style={'width': '49.6%', 'display': 'inline-block'})
              ], className='row'),
 
-    # html.Div(id='world-map',
-    #          style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'},
-    #          children=[html.Div(dcc.Graph(id='global-outbreak', figure=fig_mapbox, style={'height': 800}))
-    #                    ])
+    html.Div(id='world-map',
+             style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'},
+             children=[html.Div(dcc.Graph(id='global-outbreak', figure=fig_mapbox, style={'height': 800}))
+                       ])
 ])
 
 df_ranking = countries_df[countries_df['Date'] == countries_df['Date'].max()].groupby(['Country'])[
