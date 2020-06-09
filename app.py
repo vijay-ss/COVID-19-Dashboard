@@ -81,8 +81,8 @@ fig_mapbox = px.scatter_mapbox(
     lat=formatted_gdf['Lat'],
     lon=formatted_gdf['Long'],
     hover_name=formatted_gdf['Description'],
-    #size=np.where(formatted_gdf['Confirmed'] > 0, np.ceil(np.log(formatted_gdf['Confirmed'])), 0),
-    size=formatted_gdf['Confirmed'].pow(0.3),
+    size=np.where(formatted_gdf['Confirmed'] > 0, np.ceil(np.log(formatted_gdf['Confirmed'])), 0),
+    #size=formatted_gdf['Confirmed'].pow(0.3),
     range_color=[0, 200000],
     opacity=0.6,
     size_max=30,
@@ -296,19 +296,12 @@ app.layout = html.Div(children=[
                       ' (Maintained by John Hopkins University)',
              style={'textAlign': 'center'}),
 
-    #     html.Div([
-    #         dbc.Tabs(children=[
-    #             dbc.Tab(label="Tab 1", tab_id="tab-1"),
-    #             dbc.Tab(label="Tab 2", tab_id="tab-2")
-    #         ])
-    #     ]
-    # ),
 
     html.Div([
         dcc.Location(id='url', refresh=False),
-        dbc.Button(dcc.Link('Global', href='/page-1'), id="global-button", color='primary', className="mr-1"),
-        dbc.Button(dcc.Link('World News', href='/page-2'), id="news-button", color='primary', className="mr-1"),
-        dbc.Button(dcc.Link('Ranking', href='/page-3'), id="top-button", color='primary', className="mr-1"),
+        dbc.Button(dcc.Link('World', href='/page-1'), id="global-button", color='primary', className="mr-1"),
+        dbc.Button(dcc.Link('Map', href='/page-2'), id="map-button", color='primary', className="mr-1"),
+        dbc.Button(dcc.Link('News', href='/page-3'), id="news-button", color='primary', className="mr-1"),
         dbc.Button(dcc.Link('Canada', href='/page-4'), id="canada-button", color='primary', className="mr-1"),
         dbc.Button('About', id='open', active=False),
         dbc.Modal([
@@ -324,14 +317,6 @@ app.layout = html.Div(children=[
               'marginTop': '.5%'}),
 ]  # ,style={'background-image':'url("assets/background_image.png")'}
 )
-
-# html.Div([
-#     dcc.Location(id='url', refresh=False),
-#     #dcc.Link('Global',href='/page-1'),
-#     #dcc.Link('Top',href='/page-2'),
-#     dcc.Link('Canada',href='/page-3'),
-#     html.Div(id='page-content'),
-# ],style={'textAlign':'center','width':'100%','float':'center','display':'inline-block'})])
 
 number_plates = html.Div(id='number-plate',
                          style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'},
@@ -440,11 +425,18 @@ page_1_layout = html.Div([
                           style={'width': '49.6%', 'display': 'inline-block'})
              ], className='row'),
 
-    html.Div(id='world-map',
-             style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'},
-             children=[html.Div(dcc.Graph(id='global-outbreak', figure=fig_mapbox, style={'height': 800}))
-                       ])
+    # html.Div(id='world-map',
+    #          style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'},
+    #          children=[html.Div(dcc.Graph(id='global-outbreak', figure=fig_mapbox, style={'height': 800}))
+    #                    ])
 ])
+
+world_map =  html.Div([
+    html.Div(id='world-map',
+    style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'},
+    children=[html.Div(dcc.Graph(id='global-outbreak', figure=fig_mapbox, style={'height': 800}))
+    ])
+    ])
 
 df_ranking = countries_df[countries_df['Date'] == countries_df['Date'].max()].groupby(['Country'])[
     'Confirmed', 'Deaths', 'Recovered', 'Active'].sum().sort_values('Confirmed', ascending=False).reset_index()
@@ -455,7 +447,7 @@ df_ranking[['Confirmed', 'Deaths', 'Recovered', 'Active']] = df_ranking[
 
 page_3_layout = html.Div([
     html.Div(id='page-3'),
-    html.Div(html.H2('Global Ranking - Top 20'),
+    html.Div(html.H2('Top 20 Confirmed as of '+ global_daily_count['Date'].max().strftime('%b %e, %Y')),
              style={'backgroundColor': dash_colors['background'], 'padding': '.5rem'}),
     html.Div(dbc.Table.from_dataframe(df_ranking.head(20), striped=True, bordered=True, hover=True),
              style={'marginTop': '.5%'})
@@ -544,9 +536,9 @@ def display_page(pathname):
     if pathname == '/page-1':
         return number_plates, page_1_layout
     elif pathname == '/page-2':
-        return number_plates, news_feed_layout
+        return number_plates, world_map, page_3_layout
     elif pathname == '/page-3':
-        return number_plates, page_3_layout
+        return number_plates, news_feed_layout
     elif pathname == '/page-4':
         return number_plates, page_4_layout
     else:
