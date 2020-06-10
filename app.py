@@ -1,6 +1,7 @@
 """MAIN APP"""
 
 import dash
+#import dash_table
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
@@ -83,7 +84,7 @@ fig_mapbox = px.scatter_mapbox(
     hover_name=formatted_gdf['Description'],
     size=np.where(formatted_gdf['Confirmed'] > 0, np.ceil(np.log(formatted_gdf['Confirmed'])), 0),
     #size=formatted_gdf['Confirmed'].pow(0.3),
-    range_color=[0, 200000],
+    range_color=[0, 150000],
     opacity=0.6,
     size_max=30,
     zoom=1.3,
@@ -94,7 +95,7 @@ fig_mapbox = px.scatter_mapbox(
     color_continuous_scale='Portland',
     # color_discrete_sequence=px.colors.qualitative.Light24,
 )
-fig_mapbox.update_layout(autosize=True, coloraxis_showscale=True)
+fig_mapbox.update_layout(autosize=True, coloraxis_showscale=True,)
 
 # Ontario Map
 fig_can = px.line(x=canada_df['Date'],
@@ -177,6 +178,22 @@ dash_colors = {
     'blue': '#466fc2',
     'green': '#5bc246',
     'orange': '5A9E6F'
+}
+
+newsfeed_div_style = {
+    "width": "24.4%",
+    'height': '53rem',
+    "padding": "1rem",
+    "background-color": dash_colors['background'],
+    'display': 'block',
+}
+
+twitter_div_style = {
+    "width": "74.8%",
+    'height': '22rem',
+    'marginLeft': '.8%',
+    # "padding": "1rem",
+    # "background-color": dash_colors['background'],
 }
 
 # base margin style for each page
@@ -402,7 +419,7 @@ number_plates = html.Div(id='number-plate',
                                                                'fontSize': 50},
                                                         children='{:,.0f}'.format(int(global_total['Active']))),
                                                 html.P(style={'textAlign': 'center',
-                                                              'color': dash_colors['red_bright'], 'fontSize': 20},
+                                                              'color': ticker_color(int(global_total['Active']) - int(delta['Active'])), 'fontSize': 20},
                                                        children='{0:+,d}'.format(
                                                            int(global_total['Active']) - int(delta['Active']))
                                                                 + ' (' + global_total['Active_pct'].map(
@@ -414,6 +431,15 @@ number_plates = html.Div(id='number-plate',
                          ], className='row'
                          )
 
+
+df_ranking = countries_df[countries_df['Date'] == countries_df['Date'].max()].groupby(['Country'])[
+    'Confirmed', 'Deaths', 'Recovered', 'Active'].sum().sort_values('Confirmed', ascending=False).reset_index()
+df_ranking['Rank'] = df_ranking.index + 1
+df_ranking = df_ranking[['Rank', 'Country', 'Confirmed', 'Deaths', 'Recovered', 'Active']]
+df_ranking[['Confirmed', 'Deaths', 'Recovered', 'Active']] = df_ranking[
+    ['Confirmed', 'Deaths', 'Recovered', 'Active']].astype(int).applymap('{:,}'.format)
+
+
 page_1_layout = html.Div([
     html.Div(id='page-1'),
     html.Div(id='global-trending',
@@ -424,12 +450,38 @@ page_1_layout = html.Div([
                  html.Div(dcc.Graph(id='time-series', figure=fig_timeseries),
                           style={'width': '49.6%', 'display': 'inline-block'})
              ], className='row'),
-
-    # html.Div(id='world-map',
-    #          style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'},
-    #          children=[html.Div(dcc.Graph(id='global-outbreak', figure=fig_mapbox, style={'height': 800}))
-    #                    ])
 ])
+
+# table = html.Div([
+#     html.Div(dash_table.DataTable
+#     (id='interactive-table',
+#     data=df_ranking.to_dict('records'),
+#     columns=[{"name": i, "id": i, 'deletable': True, 'selectable': True} for i in df_ranking.columns],
+#     style_header={'backgroundColor': 'rgb(30, 30, 30)','fontWeight': 'bold' },
+#     style_cell={'backgroundColor': '#3A3F44','color': dash_colors['text'],'maxWidth': 0,'fontSize':14},
+#     style_table={'maxHeight': '350px','overflowY': 'auto'},
+#     style_data_conditional=[{'if': {'row_index': 'even'},'backgroundColor': '#272B30',}],
+#     style_cell_conditional=[
+#         {'if': {'column_id': 'Rank'},'width': '10%'},
+#         {'if': {'column_id': 'Country'},'width': '26%'},
+#         {'if': {'column_id': 'Confirmed'},'width': '16%'},
+#         {'if': {'column_id': 'Deaths'},'width': '11%'},
+#         {'if': {'column_id': 'Recovered'},'width': '16%'},
+#         {'if': {'column_id': 'Active'},'width': '16%'}
+#         ],
+#         editable=False,
+#                             filter_action="native",
+#                             sort_action="native",
+#                             sort_mode="single",
+#                             row_selectable="single",
+#                             row_deletable=False,
+#                             selected_columns=[],
+#                             selected_rows=[],
+#                             page_current=0,
+#                             page_size=1000, 
+#     ))
+# ], style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%',
+# 'backgroundColor': dash_colors['background']})
 
 world_map =  html.Div([
     html.Div(id='world-map',
@@ -438,15 +490,8 @@ world_map =  html.Div([
     ])
     ])
 
-df_ranking = countries_df[countries_df['Date'] == countries_df['Date'].max()].groupby(['Country'])[
-    'Confirmed', 'Deaths', 'Recovered', 'Active'].sum().sort_values('Confirmed', ascending=False).reset_index()
-df_ranking['Rank'] = df_ranking.index + 1
-df_ranking = df_ranking[['Rank', 'Country', 'Confirmed', 'Deaths', 'Recovered', 'Active']]
-df_ranking[['Confirmed', 'Deaths', 'Recovered', 'Active']] = df_ranking[
-    ['Confirmed', 'Deaths', 'Recovered', 'Active']].astype(int).applymap('{:,}'.format)
-
-page_3_layout = html.Div([
-    html.Div(id='page-3'),
+table_dbc = html.Div([
+    html.Div(id='styled-table'),
     html.Div(html.H2('Top 20 Confirmed as of '+ global_daily_count['Date'].max().strftime('%b %e, %Y')),
              style={'backgroundColor': dash_colors['background'], 'padding': '.5rem'}),
     html.Div(dbc.Table.from_dataframe(df_ranking.head(20), striped=True, bordered=True, hover=True),
@@ -467,22 +512,6 @@ page_4_layout = html.Div([
 
 # https://www.cbc.ca/cmlink/rss-world
 # todo figure out how to scale the twitter table
-
-newsfeed_div_style = {
-    "width": "24.4%",
-    'height': '53rem',
-    "padding": "1rem",
-    "background-color": dash_colors['background'],
-    'display': 'block',
-}
-
-twitter_div_style = {
-    "width": "74.8%",
-    'height': '22rem',
-    'marginLeft': '.8%',
-    # "padding": "1rem",
-    # "background-color": dash_colors['background'],
-}
 
 news_feed_layout = html.Div(id='news-page', style=page_margin, children=[
     html.Div(id='rss-feed',
@@ -534,15 +563,15 @@ def toggle_modal(n1, n2, is_open):
               [Input('url', 'pathname')])
 def display_page(pathname):
     if pathname == '/page-1':
-        return number_plates, page_1_layout
+        return number_plates, page_1_layout, table_dbc
     elif pathname == '/page-2':
-        return number_plates, world_map, page_3_layout
+        return number_plates, world_map
     elif pathname == '/page-3':
         return number_plates, news_feed_layout
     elif pathname == '/page-4':
         return number_plates, page_4_layout
     else:
-        return number_plates, page_1_layout
+        return number_plates, page_1_layout, table_dbc
 
 if __name__ == '__main__':
     app.run_server()
