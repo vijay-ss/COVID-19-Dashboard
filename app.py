@@ -78,7 +78,7 @@ formatted_gdf['Date'] = formatted_gdf['Date'].dt.strftime('%m/%d/%Y')
 # Mapbox
 fig_mapbox = px.scatter_mapbox(
     mapbox_style='carto-darkmatter',
-    title='Global Outbreak Map - Hover for Detailed Information',
+    title='Global Outbreak Map - select date using slider below',
     lat=formatted_gdf['Lat'],
     lon=formatted_gdf['Long'],
     hover_name=formatted_gdf['Description'],
