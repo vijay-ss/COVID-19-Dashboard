@@ -1,7 +1,7 @@
 """MAIN APP"""
 
 import dash
-#import dash_table
+import dash_table
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
@@ -44,6 +44,18 @@ canada_province['Date'] = pd.to_datetime(canada_province['Date'])
 # Canada day over day
 canada_province['Diff'] = canada_province.groupby('Province/State')['Confirmed'].diff(periods=1)
 
+# Ranked Countries by confirmed
+df_ranking = countries_df[countries_df['Date'] == countries_df['Date'].max()].groupby(['Country'])[
+    'Confirmed', 'Deaths', 'Recovered', 'Active'].sum().sort_values('Confirmed', ascending=False).reset_index()
+df_ranking['Rank'] = df_ranking.index + 1
+df_ranking = df_ranking[['Rank', 'Country', 'Confirmed', 'Deaths', 'Recovered', 'Active']]
+df_ranking[['Confirmed', 'Deaths', 'Recovered', 'Active']] = df_ranking[
+    ['Confirmed', 'Deaths', 'Recovered', 'Active']].astype(int).applymap('{:,}'.format)
+    
+t10 = df_ranking['Country'].head(10).to_list()
+
+df_ts_t10 = countries_df[countries_df['Country'].isin(t10)]
+
 """CREATE PLOTS"""
 
 fig_area = px.area(global_melt
@@ -52,21 +64,28 @@ fig_area = px.area(global_melt
                    , color='Type'
                    # ,height=600
                    # ,width=900
-                   , title='Worldwide Cases by Type'
+                   , title='Timeline of Worldwide Cases - by Type'
                    , template='plotly_dark'
                    )
 fig_area.update_layout(xaxis_rangeslider_visible=True)
 
+# Pie chart of confirmed
+# fig_pie_conf = px.pie(countries_df[countries_df['Date'] == countries_df['Date'].max()].groupby(['Country'])[
+#     'Confirmed', 'Deaths', 'Recovered', 'Active'].sum().sort_values('Confirmed', ascending=False).reset_index().head(20), 
+# values='Confirmed', 
+# names='Country',
+# template='plotly_dark')
+
 # Time Series
-fig_timeseries = px.line(x=countries_df['Date'].dt.strftime('%Y-%m-%d'),
-                         y=countries_df["Confirmed"],
-                         color=countries_df["Country"],
-                         hover_name=countries_df["Country"],
+fig_timeseries = px.line(x=df_ts_t10['Date'].dt.strftime('%Y-%m-%d'),
+                         y=df_ts_t10["Confirmed"],
+                         color=df_ts_t10["Country"],
+                         hover_name=df_ts_t10["Country"],
                          line_shape="spline",
                          render_mode="svg",
                          template='plotly_dark'
                          )
-fig_timeseries.update_layout(title="Timeline of Confirmed Cases",
+fig_timeseries.update_layout(title="Timeline of Top 10 Countries",
                              xaxis_title="Date",
                              yaxis_title="Confirmed Cases",
                              legend_title="Country")
@@ -95,7 +114,11 @@ fig_mapbox = px.scatter_mapbox(
     color_continuous_scale='Portland',
     # color_discrete_sequence=px.colors.qualitative.Light24,
 )
-fig_mapbox.update_layout(autosize=True, coloraxis_showscale=True,)
+fig_mapbox.update_layout(autosize=True, coloraxis_showscale=True,
+coloraxis_colorbar=dict(
+    title='Confirmed Cases'
+)
+)
 
 # Ontario Map
 fig_can = px.line(x=canada_df['Date'],
@@ -104,7 +127,8 @@ fig_can = px.line(x=canada_df['Date'],
                   hover_name=canada_df['Province/State'],
                   line_shape="spline",
                   render_mode="svg",
-                  template='plotly_dark'
+                  template='plotly_dark',
+                  color_discrete_sequence=px.colors.qualitative.Bold
                   )
 fig_can.update_layout(
     title="Timeline of Confirmed Cases - by Province",
@@ -120,7 +144,9 @@ fig_dod = px.line(x=canada_province['Date'],
                   hover_name=canada_province['Province/State'],
                   line_shape="linear",
                   render_mode="svg",
-                  template='plotly_dark'
+                  template='plotly_dark',
+                  color_discrete_sequence=px.colors.qualitative.Bold
+
                   )
 fig_dod.update_layout(
     title="Day over day - by Province",
@@ -172,6 +198,7 @@ default_layout = {
 dash_colors = {
     'background': '#111111',
     'text': '#BEBEBE',
+    'white': '#fff',
     'grid': '#333333',
     'red': '#BF0000',
     'red_bright': '#d7191c',
@@ -431,15 +458,6 @@ number_plates = html.Div(id='number-plate',
                          ], className='row'
                          )
 
-
-df_ranking = countries_df[countries_df['Date'] == countries_df['Date'].max()].groupby(['Country'])[
-    'Confirmed', 'Deaths', 'Recovered', 'Active'].sum().sort_values('Confirmed', ascending=False).reset_index()
-df_ranking['Rank'] = df_ranking.index + 1
-df_ranking = df_ranking[['Rank', 'Country', 'Confirmed', 'Deaths', 'Recovered', 'Active']]
-df_ranking[['Confirmed', 'Deaths', 'Recovered', 'Active']] = df_ranking[
-    ['Confirmed', 'Deaths', 'Recovered', 'Active']].astype(int).applymap('{:,}'.format)
-
-
 page_1_layout = html.Div([
     html.Div(id='page-1'),
     html.Div(id='global-trending',
@@ -490,13 +508,53 @@ world_map =  html.Div([
     ])
     ])
 
-table_dbc = html.Div([
+# table_dbc = html.Div([
+#     html.Div(id='styled-table'),
+#     html.Div(html.H2('Top 20 Confirmed as of '+ global_daily_count['Date'].max().strftime('%b %e, %Y')),
+#              style={'backgroundColor': dash_colors['background'], 'padding': '.5rem'}),
+#     html.Div(dbc.Table.from_dataframe(df_ranking.head(20), striped=True, bordered=True, hover=True),
+#              style={'marginTop': '.5%'})
+# ], style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'})
+
+table = html.Div([
     html.Div(id='styled-table'),
-    html.Div(html.H2('Top 20 Confirmed as of '+ global_daily_count['Date'].max().strftime('%b %e, %Y')),
+    html.Div(html.H2('Ranking by Confirmed Cases as of '+ global_daily_count['Date'].max().strftime('%b %e, %Y')),
              style={'backgroundColor': dash_colors['background'], 'padding': '.5rem'}),
-    html.Div(dbc.Table.from_dataframe(df_ranking.head(20), striped=True, bordered=True, hover=True),
-             style={'marginTop': '.5%'})
-], style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%'})
+    html.Div([
+        dash_table.DataTable(id='datatable-interactivity',
+            data=df_ranking.to_dict('records'),
+            columns=[{"name": i, "id": i, "deletable": False, "selectable": True} for i in df_ranking.columns],
+        #fixed_rows={'headers': True, 'data':0},
+        style_header={'backgroundColor': '#272B30','fontWeight': 'bold'},
+        style_table={'maxHeight': '500px', 'overflowY': 'auto', 'overflowX': 'False'},
+        style_data={'whiteSpace': 'normal', 'height': 'auto',},
+        style_data_conditional=[{'if': {'row_index': 'even'}, 'backgroundColor': 'rgb(248, 248, 248)'}],
+        style_cell_conditional=[
+            {'if': {'column_id': 'Rank'},'width': '8%'},
+            {'if': {'column_id': 'Country'},'width': '25%'},
+            {'if': {'column_id': 'Confirmed'},'width': '15%'},
+            {'if': {'column_id': 'Deaths'},'width': '15%'},
+            {'if': {'column_id': 'Recovered'},'width': '15%'},
+            {'if': {'column_id': 'Active'},'width': '15%'},
+            ],
+        style_cell={'backgroundColor': '#272B30', 'color': dash_colors['white'], 
+        'maxWidth': 0, 'fontSize':16, 'textAlign': 'center', 'font-family': 'Segoe UI'},
+        editable=False,
+        filter_action="native",
+        sort_action="native",
+        sort_mode="single",
+        #column_selectable="single",
+        #row_selectable="single",
+        row_deletable=False,
+        selected_columns=[],
+        selected_rows=[],
+        #page_action="native",
+        page_current= 0,
+        page_size= 1000,
+        )
+        ])
+        ], style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%', 'height': '650px'},
+className='six columns')
 
 page_4_layout = html.Div([
     html.Div(id='page-4'),
@@ -546,6 +604,17 @@ news_feed_layout = html.Div(id='news-page', style=page_margin, children=[
              ], style=twitter_div_style)
 ], className='row')
 
+# datatable
+@app.callback(
+    Output('datatable-interactivity', 'style_data_conditional'),
+    [Input('datatable-interactivity', 'selected_columns')]
+)
+def update_styles(selected_columns):
+    return [{
+        'if': { 'column_id': i },
+        'background_color': '#D2F3FF'
+    } for i in selected_columns]
+
 # Info modal window
 @app.callback(
     Output("modal", "is_open"),
@@ -563,7 +632,7 @@ def toggle_modal(n1, n2, is_open):
               [Input('url', 'pathname')])
 def display_page(pathname):
     if pathname == '/page-1':
-        return number_plates, page_1_layout, table_dbc
+        return number_plates, page_1_layout, table
     elif pathname == '/page-2':
         return number_plates, world_map
     elif pathname == '/page-3':
@@ -571,7 +640,7 @@ def display_page(pathname):
     elif pathname == '/page-4':
         return number_plates, page_4_layout
     else:
-        return number_plates, page_1_layout, table_dbc
+        return number_plates, page_1_layout, table
 
 if __name__ == '__main__':
     app.run_server()
