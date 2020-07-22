@@ -9,7 +9,7 @@ Flask
 Flask-Compress
 gunicorn
 numpy
-pandas
+pandas==1.0.3
 plotly
 plotly-express
 datetime
