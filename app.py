@@ -525,10 +525,10 @@ table = html.Div([
             data=df_ranking.to_dict('records'),
             columns=[{"name": i, "id": i, "deletable": False, "selectable": True} for i in df_ranking.columns],
         #fixed_rows={'headers': True, 'data':0},
-        style_header={'backgroundColor': '#272B30','fontWeight': 'bold'},
-        style_table={'maxHeight': '500px', 'overflowY': 'auto', 'overflowX': 'False'},
+        style_header={'backgroundColor': 'rgb(30,30,30)','fontWeight': 'bold'},
+        style_table={'maxHeight': '500px','overflowY': 'auto', 'overflowX': 'false'},
         style_data={'whiteSpace': 'normal', 'height': 'auto',},
-        style_data_conditional=[{'if': {'row_index': 'even'}, 'backgroundColor': 'rgb(248, 248, 248)'}],
+        style_data_conditional=[{'if': {'row_index': 'even'}, 'backgroundColor': '#272B30'}],
         style_cell_conditional=[
             {'if': {'column_id': 'Rank'},'width': '8%'},
             {'if': {'column_id': 'Country'},'width': '25%'},
@@ -551,10 +551,13 @@ table = html.Div([
         #page_action="native",
         page_current= 0,
         page_size= 1000,
+        style_as_list_view=True
         )
         ])
-        ], style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%', 'height': '650px'},
-className='six columns')
+        ], 
+        style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '.5%', 'marginTop': '.5%', 'height': '650px'},
+className='six columns'
+)
 
 page_4_layout = html.Div([
     html.Div(id='page-4'),
