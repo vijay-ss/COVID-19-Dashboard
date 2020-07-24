@@ -93,7 +93,7 @@ This data is refreshed nightly by John Hopkins University.
 
 ### World News
 
-A small rss-feed is displayed on the left pane. The intention is a non-intrusive feed, with onbjective information on Covid-19 updates.
+A small rss-feed is displayed on the left pane. The intention is a non-intrusive feed, with objective information on Covid-19 updates.
 
 ![](images/news_feed.png)
 
