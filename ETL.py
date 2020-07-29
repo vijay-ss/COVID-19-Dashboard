@@ -11,8 +11,8 @@ url_4 = 'https://raw.githubusercontent.com/datasets/covid-19/master/data/worldwi
 
 # import raw daily tweet file from GSU github
 url_tweet = 'https://raw.githubusercontent.com/thepanacealab/covid19_twitter/master/dailies/' + \
-            (dt.date.today() - dt.timedelta(days=4)).strftime('%Y-%m-%d') + '/' + \
-            (dt.date.today() - dt.timedelta(days=4)).strftime('%Y-%m-%d') + \
+            (dt.date.today() - dt.timedelta(days=3)).strftime('%Y-%m-%d') + '/' + \
+            (dt.date.today() - dt.timedelta(days=3)).strftime('%Y-%m-%d') + \
             '_top1000trigrams.csv'
 
 time_series = pd.read_csv(url_1, index_col=0,parse_dates=[0]).reset_index()
@@ -77,7 +77,7 @@ countries_df['Description'] = countries_df['Country'] + '<br>' \
 national_daily_count = countries_df.groupby(['Date','Country'])['Confirmed','Deaths','Recovered','Active'].sum().reset_index()
 global_daily_count = countries_df.groupby(['Date'])['Confirmed','Deaths','Recovered','Active'].sum().reset_index()
 global_melt = global_daily_count.melt(id_vars=['Date'],
-                                      value_vars=['Recovered','Deaths','Active','Confirmed'],
+                                      value_vars=['Deaths','Recovered','Active','Confirmed'],
                                       var_name='Type',value_name='Count'
                                       )
 
