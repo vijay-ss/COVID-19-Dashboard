@@ -3,6 +3,8 @@
 
 This interactive dashboard is aimed at providing users with a daily summary of the global situation on Covid-19. It is intended for those seeking a concise breakdown of the numbers, without the constant news updates. There is also a snapshot for Canadian cases, and can be expanded to other regions in the future as necessary.
 
+Link: https://covid19-tracker-vds.herokuapp.com/
+
 
 ![](images/Full_Page.png)
 
