@@ -18,14 +18,14 @@ url_tweet = 'https://raw.githubusercontent.com/thepanacealab/covid19_twitter/mas
 time_series = pd.read_csv(url_1, index_col=0,parse_dates=[0]).reset_index()
 countries = pd.read_csv(url_2, index_col=0,parse_dates=[0]).reset_index()
 countries_pv = pd.read_csv(url_3, index_col=0,parse_dates=[0]).reset_index()
-ww_agg = pd.read_csv(url_4, index_col=0,parse_dates=[0]).reset_index()
+#ww_agg = pd.read_csv(url_4, index_col=0,parse_dates=[0]).reset_index()
 daily_twitter_phrases = pd.read_csv(url_tweet, index_col=0, parse_dates=[0]).reset_index()
 
 # convert date objects to datetime
 countries['Date'] = pd.to_datetime(countries['Date'])
 countries_pv['Date'] = pd.to_datetime(countries_pv['Date'])
 time_series['Date'] = pd.to_datetime(time_series['Date'])
-ww_agg['Date'] = pd.to_datetime(ww_agg['Date'])
+#ww_agg['Date'] = pd.to_datetime(ww_agg['Date'])
 
 # A df of all countries, incl co-ordinates for map
 # A cleaner country df, without province/state but includes lat and long for mapping purposes
