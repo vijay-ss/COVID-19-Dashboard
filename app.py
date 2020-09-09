@@ -113,8 +113,10 @@ fig_mapbox = px.scatter_mapbox(
     color=formatted_gdf['Confirmed'],
     color_continuous_scale='Portland',
     # color_discrete_sequence=px.colors.qualitative.Light24,
+
 )
 fig_mapbox.update_layout(autosize=True, coloraxis_showscale=True,
+transition = {'duration': 5},
 coloraxis_colorbar=dict(
     title='Confirmed Cases'
 )
