@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 from datetime import date, timedelta
 import base64
+print('Libraries imported.')
 
 """GATHER INPUT FILES"""
 
@@ -21,12 +22,28 @@ url = 'https://raw.githubusercontent.com/vijay-ss/COVID-19-Dashboard/master/data
 df_tweets = pd.read_csv(url, index_col=0, parse_dates=[0]).reset_index()
 
 import ETL
-countries_df = pd.read_csv(r'data/countries.csv')
-global_daily_count = pd.read_csv(r'data/global_daily_count.csv')
-global_melt = pd.read_csv(r'data/global_melt.csv')
-canada_df = pd.read_csv(r'data/canada.csv')
-canada_province = pd.read_csv(r'data/canada_by_province.csv')
-daily_twitter_phrases = pd.read_csv(r'data/twitter_phrases.csv')
+# countries_df = pd.read_csv(r'data/countries.csv')
+# global_daily_count = pd.read_csv(r'data/global_daily_count.csv')
+# global_melt = pd.read_csv(r'data/global_melt.csv')
+# canada_df = pd.read_csv(r'data/canada.csv')
+# canada_province = pd.read_csv(r'data/canada_by_province.csv')
+# daily_twitter_phrases = pd.read_csv(r'data/twitter_phrases.csv')
+
+# countries_df = ETL.countries_df
+# global_daily_count = ETL.global_daily_count
+# global_melt = ETL.global_melt
+# canada_df = ETL.canada_df
+# canada_province = ETL.p
+# daily_twitter_phrases = ETL.daily_twitter_phrases
+
+from ETL import countries_df
+from ETL import global_daily_count
+from ETL import global_melt
+from ETL import canada_df
+from ETL import p
+from ETL import daily_twitter_phrases
+
+canada_province = p
 
 ### Data Pre-processing ###
 
@@ -107,7 +124,7 @@ fig_mapbox = px.scatter_mapbox(
     opacity=0.6,
     size_max=30,
     zoom=1.3,
-    animation_frame=countries_df['Date'].astype(str),
+    animation_frame=formatted_gdf['Date'].astype(str),
     # center=go.layout.mapbox.Center(lat=14,lon=21),
     template='plotly_dark',
     color=formatted_gdf['Confirmed'],
