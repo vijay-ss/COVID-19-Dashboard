@@ -45,7 +45,7 @@ After pulling the JHU data, I needed to clean it up so that it was usable for th
 * Create a computed column 'Active' cases
 * Remove province/state, group each country by date
 * Update latitude and longitude for countries who are spread due to multiple colonies/provinces
-* Create a description column including ass summary statistics for the choropleth map hoverdata
+* Create a description column including summary statistics for the choropleth map hoverdata
 * Create a Canada specific data frame with day-over-day deltas using the .diff() method
 
 ### Web Scraping
