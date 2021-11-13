@@ -99,7 +99,7 @@ A small rss-feed is displayed on the left pane. The intention is a non-intrusive
 
 ### Canada
 
-Being Canadian, I wanted to explore the outbreak and how it differs acorss each province in the country. The day-over-day view helps depict how the virus has spread over time.
+Being Canadian, I wanted to explore the outbreak and how it differs across each province in the country. The day-over-day view helps depict how the virus has spread over time.
 
 ![](images/canada.png)
 
